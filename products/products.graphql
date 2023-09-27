@@ -1,0 +1,23 @@
+type Query {
+  products: [Product]
+  productByPrice(min: Float!, max: Float!): [Product]
+  product(id: ID!): Product
+}
+
+type Mutation {
+  addProduct(id: ID!, name: String, description: String, price: Float): Product
+  addProductReview(productID: ID!, rating: Int!, comments: String): Product
+}
+
+type Product {
+  id: ID!
+  name: String!
+  description: String!
+  reviews: [Review]
+  price: Float!
+}
+
+type Review {
+  rating: Int!
+  comments: String
+}
