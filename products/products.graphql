@@ -5,7 +5,7 @@ type Query {
 }
 
 type Mutation {
-  addProduct(id: ID!, name: String, description: String, price: Float): Product
+  addProduct(id: ID!, name: String, description: String, price: Float): Response
   addProductReview(productID: ID!, rating: Int!, comments: String): Product
 }
 
@@ -20,4 +20,20 @@ type Product {
 type Review {
   rating: Int!
   comments: String
+}
+
+type CustomError {
+  code: String!
+  message: String!
+}
+
+type MutationResponse {
+  success: Boolean!
+  errors: [CustomError]!
+  product: Product
+}
+
+type Response {
+  data: String
+  errors: [CustomError]
 }

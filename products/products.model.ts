@@ -59,6 +59,19 @@ const addProducts = (
   description: string,
   price: number
 ) => {
+  let product = Products.find((product) => product.id === id);
+
+  if (product) {
+    return {
+      data: JSON.stringify(product),
+      errors: [
+        {
+          code: "SOME_ERROR_CODE",
+          message: "Duplicate ID Product already exists",
+        },
+      ],
+    };
+  }
   const newProduct = {
     id: id,
     name: name,
@@ -69,7 +82,10 @@ const addProducts = (
 
   Products.push(newProduct);
 
-  return newProduct;
+  return {
+    errors: [],
+    data: JSON.stringify(newProduct),
+  };
 };
 
 const addProductReview = (id: string, rating: number, comments: string) => {

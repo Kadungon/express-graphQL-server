@@ -4,10 +4,9 @@ import path from "path";
 import { dirname } from "path";
 import { fileURLToPath } from "url";
 import { makeExecutableSchema } from "@graphql-tools/schema";
-import { createHandler } from "graphql-http/lib/use/express";
+import { ApolloServer } from "@apollo/server";
+import { expressMiddleware } from "@apollo/server/express4";
 import { loadFilesSync } from "@graphql-tools/load-files";
-import { Products } from "./products/products.model";
-import { Orders } from "./orders/orders.model";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -21,24 +20,21 @@ const schema = makeExecutableSchema({
   resolvers: resolversArray,
 });
 
-const ecommerceData = {
-  products: Products,
-  orders: Orders,
-};
-const app = express();
+async function startApollowServer() {
+  const app = express();
 
-app.use(morgan("tiny"));
-app.use(express.json());
+  const server = new ApolloServer({
+    schema,
+  });
+  await server.start();
 
-app.get("/", (req, res) => {
-  res.json({ message: "hello" });
-});
+  app.use(morgan("tiny"));
+  app.use(express.json());
+  app.use("/graphql", expressMiddleware(server));
 
-app.use(
-  "/graphql",
-  createHandler({ schema: schema, rootValue: ecommerceData })
-);
+  app.listen(4000, () => {
+    console.log("App Listning at PORT:4000");
+  });
+}
 
-app.listen(4000, () => {
-  console.log("App Listning at PORT:4000");
-});
+startApollowServer();
